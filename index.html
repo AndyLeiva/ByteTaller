@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByteTaller — Reparación, upgrades y repuestos de PC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10151b;
+    --bg-panel: #171e26;
+    --bg-panel-raised: #1e2731;
+    --border: #29323c;
+    --border-soft: #202932;
+    --copper: #c9803f;
+    --copper-bright: #e2984f;
+    --teal: #5fa39a;
+    --text: #eef2f1;
+    --text-muted: #93a1ab;
+    --text-dim: #5f6c76;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+  }
+
+  a { color: inherit; }
+
+  .wrap{ max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- header ---------- */
+  header{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(16,21,27,0.88);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 0;
+  }
+  .brand{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .brand .dot{
+    width:9px; height:9px; border-radius:50%;
+    background: var(--copper-bright);
+    box-shadow: 0 0 0 3px rgba(201,128,63,0.18);
+  }
+  nav.links{ display:flex; gap: 28px; font-size: 0.94rem; color: var(--text-muted); }
+  nav.links a{ text-decoration:none; transition: color .15s ease; }
+  nav.links a:hover{ color: var(--text); }
+  .nav-cta{
+    background: var(--copper);
+    color: #171008;
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-cta:hover{ background: var(--copper-bright); }
+  .menu-toggle{ display:none; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 88px 0 72px;
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 56px;
+    align-items:center;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--teal);
+    margin-bottom: 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .line{ width: 28px; height:1px; background: var(--teal); opacity:0.6; }
+  h1{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    max-width: 15ch;
+  }
+  .hero p.lede{
+    margin-top: 20px;
+    font-size: 1.08rem;
+    color: var(--text-muted);
+    max-width: 46ch;
+  }
+  .hero-actions{ margin-top: 32px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn-primary{
+    background: var(--copper);
+    color: #171008;
+    padding: 13px 24px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary:hover{ background: var(--copper-bright); }
+  .btn-secondary{
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 13px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.98rem;
+  }
+  .btn-secondary:hover{ border-color: var(--text-dim); }
+
+  /* diagnostic panel */
+  .diag{
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow:hidden;
+  }
+  .diag-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .diag-head .status{ color: var(--teal); }
+  .diag-body{ padding: 22px 18px 24px; }
+  .diag-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding: 13px 0;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .diag-row:last-child{ border-bottom:none; }
+  .diag-label{ font-size: 0.88rem; color: var(--text-muted); }
+  .diag-value{ font-family: var(--font-mono); font-size: 1rem; }
+  .diag-value.before{ color: var(--text-dim); text-decoration: line-through; text-decoration-color: #4a3a30; }
+  .diag-value.after{ color: var(--copper-bright); font-weight:500; margin-left: 10px; }
+  .diag-note{
+    margin-top: 16px; font-size: 0.8rem; color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  section{ padding: 76px 0; border-bottom: 1px solid var(--border); }
+
+  .section-head{ margin-bottom: 44px; max-width: 60ch; }
+  .section-head .eyebrow{ margin-bottom: 14px; }
+  .section-head h2{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+  .section-head p{ margin-top: 12px; color: var(--text-muted); }
+
+  /* ---------- servicios: ticket cards ---------- */
+  .tickets{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .ticket{
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 22px 20px 20px;
+    position: relative;
+  }
+  .ticket::before{
+    content: attr(data-code);
+    position:absolute; top:18px; right:18px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+  .ticket h3{
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 600;
+    max-width: 80%;
+  }
+  .ticket p{ margin-top: 10px; font-size: 0.9rem; color: var(--text-muted); }
+  .ticket .price{
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--teal);
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+  }
+
+  /* ---------- repuestos ---------- */
+  .parts-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .part{
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 18px;
+  }
+  .part .kind{
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-transform: lowercase;
+  }
+  .part h4{
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .part p{ font-size: 0.86rem; color: var(--text-muted); margin-top: 8px; }
+  .part .from{
+    margin-top: 14px; font-family: var(--font-mono);
+    font-size: 0.85rem; color: var(--copper-bright);
+  }
+
+  .catalog-note{
+    margin-top: 26px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 16px 18px;
+    border-left: 2px solid var(--copper);
+    background: var(--bg-panel);
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* ---------- proceso ---------- */
+  .process{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 0; position:relative; }
+  .process::before{
+    content:'';
+    position:absolute; top:19px; left:6%; right:6%; height:1px;
+    background: var(--border);
+  }
+  .step{ position:relative; padding-right: 20px; }
+  .step .mark{
+    width: 38px; height:38px; border-radius:50%;
+    border:1px solid var(--copper);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-mono); font-size:0.85rem; color: var(--copper-bright);
+    background: var(--bg);
+    position:relative; z-index:2;
+    margin-bottom:16px;
+  }
+  .step h4{ font-family: var(--font-display); font-size:1rem; font-weight:600; }
+  .step p{ font-size:0.86rem; color: var(--text-muted); margin-top:8px; }
+
+  /* ---------- por qué elegirnos ---------- */
+  .reasons{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 28px 40px; }
+  .reason{ display:flex; gap:14px; }
+  .reason .ck{
+    flex-shrink:0; width:22px; height:22px; border-radius:4px;
+    border: 1px solid var(--teal); color: var(--teal);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-mono); font-size:0.8rem; margin-top:2px;
+  }
+  .reason h4{ font-family: var(--font-display); font-size:0.98rem; font-weight:600; }
+  .reason p{ font-size:0.87rem; color: var(--text-muted); margin-top:6px; }
+
+  /* ---------- contacto ---------- */
+  .contact{ display:grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:start; }
+  .contact-info .row{
+    display:flex; gap:16px; padding: 16px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .contact-info .row .k{ font-family: var(--font-mono); font-size:0.78rem; color: var(--text-dim); width: 110px; flex-shrink:0; padding-top:2px; }
+  .contact-info .row .v{ font-size:0.94rem; }
+  .contact-card{
+    background: var(--bg-panel); border:1px solid var(--border); border-radius:8px;
+    padding: 30px;
+  }
+  .contact-card h3{ font-family: var(--font-display); font-size:1.2rem; font-weight:600; }
+  .contact-card p{ margin-top:10px; color: var(--text-muted); font-size:0.92rem; }
+  .contact-card .btn-primary{ margin-top:22px; width:100%; justify-content:center; }
+
+  footer{ padding: 32px 0; text-align:center; color: var(--text-dim); font-size:0.85rem; }
+
+  @media (max-width: 860px){
+    nav.links{ display:none; }
+    .hero{ grid-template-columns: 1fr; padding-top: 56px; }
+    .tickets{ grid-template-columns: 1fr; }
+    .parts-grid{ grid-template-columns: repeat(2,1fr); }
+    .process{ grid-template-columns: repeat(2,1fr); gap: 28px; }
+    .process::before{ display:none; }
+    .reasons{ grid-template-columns: 1fr; }
+    .contact{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand"><span class="dot"></span>ByteTaller</div>
+    <nav class="links">
+      <a href="#servicios">Servicios</a>
+      <a href="#repuestos">Repuestos</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a class="nav-cta" href="#contacto">Escribir por WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero wrap" style="border-bottom:none; padding-bottom:0;">
+  <div>
+    <div class="eyebrow"><span class="line"></span>Diagnóstico, reparación y repuestos</div>
+    <h1>Tu computadora lenta tiene arreglo, no reemplazo.</h1>
+    <p class="lede">Reparamos, actualizamos y le devolvemos velocidad a tu equipo con SSD y RAM de calidad — y si prefieres hacerlo tú mismo, te vendemos la pieza correcta.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#contacto">Escribir por WhatsApp</a>
+      <a class="btn-secondary" href="#servicios">Ver servicios</a>
+    </div>
+  </div>
+
+  <div class="diag">
+    <div class="diag-head">
+      <span>diagnostico_equipo.log</span>
+      <span class="status">● después del upgrade</span>
+    </div>
+    <div class="diag-body">
+      <div class="diag-row">
+        <span class="diag-label">Tiempo de arranque</span>
+        <span><span class="diag-value before">58s</span><span class="diag-value after">9s</span></span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Apertura de programas</span>
+        <span><span class="diag-value before">12s</span><span class="diag-value after">2s</span></span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Multitarea (varias pestañas)</span>
+        <span><span class="diag-value before">Se congela</span><span class="diag-value after">Estable</span></span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Almacenamiento</span>
+        <span><span class="diag-value before">HDD</span><span class="diag-value after">SSD</span></span>
+      </div>
+      <div class="diag-note">* Ejemplo típico de upgrade a SSD + RAM. Reemplaza con tus propios casos reales cuando los tengas.</div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios" class="wrap">
+  <div class="section-head">
+    <div class="eyebrow"><span class="line"></span>Servicios</div>
+    <h2>Del diagnóstico a la solución, sin vueltas</h2>
+    <p>Precios claros desde el inicio. Todo incluye mano de obra e instalación.</p>
+  </div>
+
+  <div class="tickets">
+    <div class="ticket" data-code="SVC-01">
+      <h3>Diagnóstico general</h3>
+      <p>Revisamos hardware y software para identificar qué está frenando tu equipo.</p>
+      <div class="price">desde $10</div>
+    </div>
+    <div class="ticket" data-code="SVC-02">
+      <h3>Upgrade a SSD</h3>
+      <p>Cambio de disco duro por SSD, con migración de tu sistema y archivos incluida.</p>
+      <div class="price">desde $45 + pieza</div>
+    </div>
+    <div class="ticket" data-code="SVC-03">
+      <h3>Ampliación de RAM</h3>
+      <p>Instalamos memoria adicional compatible con tu equipo para mejorar la multitarea.</p>
+      <div class="price">desde $20 + pieza</div>
+    </div>
+    <div class="ticket" data-code="SVC-04">
+      <h3>Limpieza y mantenimiento</h3>
+      <p>Limpieza física interna, cambio de pasta térmica y optimización del sistema.</p>
+      <div class="price">desde $15</div>
+    </div>
+    <div class="ticket" data-code="SVC-05">
+      <h3>Formateo y respaldo</h3>
+      <p>Reinstalación limpia del sistema operativo con respaldo previo de tus archivos.</p>
+      <div class="price">desde $18</div>
+    </div>
+    <div class="ticket" data-code="SVC-06">
+      <h3>Reparación de pantalla</h3>
+      <p>Cambio de pantalla en laptops con daño físico o de imagen.</p>
+      <div class="price">cotización según modelo</div>
+    </div>
+  </div>
+</section>
+
+<section id="repuestos" class="wrap">
+  <div class="section-head">
+    <div class="eyebrow"><span class="line"></span>Repuestos</div>
+    <h2>También vendemos la pieza sola</h2>
+    <p>Si prefieres instalarla tú mismo, o solo necesitas el componente, tenemos disponibilidad constante de estas categorías.</p>
+  </div>
+
+  <div class="parts-grid">
+    <div class="part">
+      <div class="kind">almacenamiento</div>
+      <h4>SSD 240GB – 1TB</h4>
+      <p>SATA y NVMe, para laptop y escritorio.</p>
+      <div class="from">desde $28</div>
+    </div>
+    <div class="part">
+      <div class="kind">memoria</div>
+      <h4>RAM DDR3 / DDR4</h4>
+      <p>Módulos de 4GB, 8GB y 16GB.</p>
+      <div class="from">desde $18</div>
+    </div>
+    <div class="part">
+      <div class="kind">energía</div>
+      <h4>Cargadores y fuentes</h4>
+      <p>Compatibles con las marcas más comunes.</p>
+      <div class="from">desde $12</div>
+    </div>
+    <div class="part">
+      <div class="kind">accesorios</div>
+      <h4>Mouse, teclados, bases</h4>
+      <p>Accesorios básicos para el día a día.</p>
+      <div class="from">desde $8</div>
+    </div>
+  </div>
+
+  <div class="catalog-note">
+    Este es un catálogo general — la disponibilidad exacta y precios finales se confirman por WhatsApp según el modelo de tu equipo.
+  </div>
+</section>
+
+<section id="proceso" class="wrap">
+  <div class="section-head">
+    <div class="eyebrow"><span class="line"></span>Cómo trabajamos</div>
+    <h2>Cuatro pasos, sin sorpresas en el precio</h2>
+  </div>
+
+  <div class="process">
+    <div class="step">
+      <div class="mark">1</div>
+      <h4>Nos escribes</h4>
+      <p>Cuéntanos qué le pasa a tu equipo por WhatsApp, con fotos si es un daño físico.</p>
+    </div>
+    <div class="step">
+      <div class="mark">2</div>
+      <h4>Diagnóstico</h4>
+      <p>Revisamos el equipo y te damos un precio cerrado antes de tocar nada.</p>
+    </div>
+    <div class="step">
+      <div class="mark">3</div>
+      <h4>Reparación</h4>
+      <p>Trabajamos en el taller o coordinamos una visita, según lo que necesites.</p>
+    </div>
+    <div class="step">
+      <div class="mark">4</div>
+      <h4>Entrega y garantía</h4>
+      <p>Te devolvemos el equipo probado, con garantía sobre el trabajo realizado.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <div class="eyebrow"><span class="line"></span>Por qué elegirnos</div>
+    <h2>Lo que nos diferencia</h2>
+  </div>
+
+  <div class="reasons">
+    <div class="reason">
+      <div class="ck">✓</div>
+      <div>
+        <h4>Precio cerrado desde el diagnóstico</h4>
+        <p>Sabes cuánto vas a pagar antes de que empecemos a trabajar.</p>
+      </div>
+    </div>
+    <div class="reason">
+      <div class="ck">✓</div>
+      <div>
+        <h4>Piezas de calidad, no las más baratas</h4>
+        <p>Usamos componentes confiables, pensados para durar.</p>
+      </div>
+    </div>
+    <div class="reason">
+      <div class="ck">✓</div>
+      <div>
+        <h4>Garantía sobre el trabajo</h4>
+        <p>Si algo falla por la reparación hecha, lo resolvemos sin costo.</p>
+      </div>
+    </div>
+    <div class="reason">
+      <div class="ck">✓</div>
+      <div>
+        <h4>Servicio en taller o a domicilio</h4>
+        <p>Tú eliges lo que te resulte más cómodo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="wrap" style="border-bottom:none;">
+  <div class="contact">
+    <div class="contact-info">
+      <div class="section-head" style="margin-bottom:24px;">
+        <div class="eyebrow"><span class="line"></span>Contacto</div>
+        <h2>Hablemos de tu equipo</h2>
+      </div>
+      <div class="row"><div class="k">whatsapp</div><div class="v">+000 0000 0000</div></div>
+      <div class="row"><div class="k">horario</div><div class="v">Lunes a sábado, 8am–6pm</div></div>
+      <div class="row"><div class="k">zona</div><div class="v">Taller fijo + servicio a domicilio en [tu ciudad]</div></div>
+      <div class="row"><div class="k">correo</div><div class="v">contacto@bytetaller.com</div></div>
+    </div>
+
+    <div class="contact-card">
+      <h3>¿Tu equipo está lento o dañado?</h3>
+      <p>Escríbenos por WhatsApp con el modelo de tu equipo y qué le pasa. Te respondemos con un diagnóstico estimado el mismo día.</p>
+      <a class="btn-primary" href="https://wa.me/00000000000" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  © 2026 ByteTaller — Reparación, upgrades y repuestos de computadoras.
+</footer>
+
+</body>
+</html>
